@@ -6,7 +6,8 @@ EXPOSE 80
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["FormForwarder/FormForwarder.csproj", "FormForwarder/"]
+COPY ["FormForwarder/FormForwarder.csproj", "./FormForwarder/"]
+COPY ["FormForwarder.sln", "./FormForwarder/"]
 RUN dotnet restore "FormForwarder/FormForwarder.csproj"
 COPY . .
 WORKDIR "/src/FormForwarder"
