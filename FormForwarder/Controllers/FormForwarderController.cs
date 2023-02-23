@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Primitives;
 using System.Net.Mail;
 using System.Text;
 
@@ -22,17 +21,11 @@ namespace FormForwarder.Controllers
             _email = configuration.GetSection("SMTP:Email").Value;
         }
 
-        [HttpGet]
-        public IActionResult Get() {
-            return Ok();
-        }
-        
         [HttpPost("{email}")]
         public IActionResult Post(string email)
         {
             var builder = new StringBuilder();
-            var EMAIL_SUBJECT = "";
-            var EMAIL_RECIP = "";
+            var emailSubject = "";
 
             if (!string.IsNullOrEmpty(email))
             {
@@ -41,12 +34,8 @@ namespace FormForwarder.Controllers
                     var val = HttpContext.Request.Form[key];
                     if (key == "subject")
                     {
-                        EMAIL_SUBJECT = val;
+                        emailSubject = val;
                     }
-                    else if (key == "send-to")
-                    {
-                        EMAIL_RECIP = val;
-                    } 
                     else if (string.IsNullOrEmpty(val.ToString()))
                     {
                         builder.AppendLine("The user did not provide a " + key);
@@ -60,9 +49,24 @@ namespace FormForwarder.Controllers
                         builder.AppendLine();
                     }
                 }
-                _smtpClient.Send(_email, EMAIL_RECIP, EMAIL_SUBJECT, builder.ToString());
+
+                if (emailSubject == string.Empty)
+                {
+                    emailSubject = EMAIL_SUBJECT;
+                }
+
+                try
+                {
+                    _smtpClient.Send(_email, email, emailSubject, builder.ToString());
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex.ToString());
+                    return Problem();
+                }
+
                 return Ok();
-            } 
+            }
             else
             {
                 return BadRequest();
