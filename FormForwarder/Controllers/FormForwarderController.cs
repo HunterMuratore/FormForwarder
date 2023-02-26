@@ -64,7 +64,6 @@ namespace FormForwarder.Controllers
                     _logger.LogError(ex.ToString());
                     return Problem();
                 }
-
                 return Ok();
             }
             else

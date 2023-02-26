@@ -9,6 +9,7 @@ var smtpHost = builder.Configuration.GetSection("SMTP:Host").Value;
 var smtpPort = int.Parse(builder.Configuration.GetSection("SMTP:Port").Value);
 var smtpEmail = builder.Configuration.GetSection("SMTP:Email").Value;
 var smtpPassword = builder.Configuration.GetSection("SMTP:Password").Value;
+var port = System.Environment.GetEnvironmentVariable("PORT");
 
 var smtpClient = new SmtpClient(smtpHost, smtpPort)
 {
@@ -35,4 +36,8 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.Run();
+if (string.IsNullOrEmpty(port)) {
+    app.Run("http://0.0.0.0:7070");
+} else {
+    app.Run($"http://0.0.0.0:${port}");
+}
