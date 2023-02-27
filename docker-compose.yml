@@ -3,7 +3,7 @@ services:
     container_name: form-forwarder
     image: outfortheseason/form-forwarder
     ports:
-      - 10000:80
+      - 7070:7070
     restart: unless-stopped
     env_file:
       - .env

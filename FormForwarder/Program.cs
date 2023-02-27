@@ -39,5 +39,5 @@ app.MapControllers();
 if (string.IsNullOrEmpty(port)) {
     app.Run("http://0.0.0.0:7070");
 } else {
-    app.Run($"http://0.0.0.0:${port}");
+    app.Run($"http://0.0.0.0:{port}");
 }
