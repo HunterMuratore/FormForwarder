@@ -29,7 +29,7 @@ namespace FormForwarder.Controllers
             var builder = new StringBuilder();
             var emailSubject = "";
 
-            if (!string.IsNullOrEmpty(email))
+            if (string.IsNullOrEmpty(email))
             {
                 return BadRequest("Must enter an email address.");
             }
