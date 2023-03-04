@@ -31,6 +31,7 @@ namespace FormForwarder.Controllers
             _logger.LogInformation(email);
             var builder = new StringBuilder();
             var emailSubject = "";
+            var successPage = "";
 
             if (string.IsNullOrEmpty(email))
             {
@@ -56,6 +57,9 @@ namespace FormForwarder.Controllers
                 {
                     builder.AppendLine("The user did not provide a " + key);
                     builder.AppendLine();
+                }
+                else if (key == "_next") {
+                    successPage = val;
                 }
                 else
                 {
@@ -84,7 +88,11 @@ namespace FormForwarder.Controllers
             }
 
             _logger.LogInformation("Returned OK");
-            return Ok();
+            if (!string.IsNullOrEmpty(successPage)) {
+                return Redirect(successPage);
+            } else {
+                return Ok();
+            }
         }
     }
 }
