@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Net.Mail;
@@ -28,10 +29,11 @@ namespace FormForwarder.Controllers
         public IActionResult Post(string email)
         {
 
-            _logger.LogInformation(email);
+            _logger.LogInformation($"Form forward request received for '{email}'.");
             var builder = new StringBuilder();
             var emailSubject = "";
             var successPage = "";
+            var message = "";
 
             if (string.IsNullOrEmpty(email))
             {
@@ -39,6 +41,7 @@ namespace FormForwarder.Controllers
                 return BadRequest("Must enter an email address.");
             }
 
+            // 
             var emailMatch = Regex.Match(email, EMAIL_VALIDATE_REGEX, RegexOptions.IgnoreCase);
             if (!emailMatch.Success) {
                 _logger.LogError("Must enter an email address in valid email address form (your@email.com).");
@@ -51,25 +54,37 @@ namespace FormForwarder.Controllers
                 if (key == "subject")
                 {
                     emailSubject = val;
-                    _logger.LogInformation(val);
                 }
                 else if (string.IsNullOrEmpty(val.ToString()))
                 {
-                    builder.AppendLine("The user did not provide a " + key);
+                    builder.AppendLine($"The user did not provide a {key}");
                     builder.AppendLine();
                 }
                 else if (key == "_next") {
                     successPage = val;
                 }
+                else if (key == "message") {
+                    message = val.ToString();  
+                }
                 else
                 {
-                    builder.AppendLine(key + ":");
+                    builder.AppendLine($"<b>${key}:</b> {val.ToString()}");
                     builder.AppendLine();
-                    builder.AppendLine(val.ToString());
-                    builder.AppendLine();
-                    _logger.LogInformation(val);
                 }
             }
+
+            if (message == "")
+            {
+                builder.AppendLine("<b>Message:</b>");
+                builder.AppendLine("The user did provide provide a message.");
+            } else
+            {
+                builder.AppendLine("<b>Message:</b>");
+                builder.AppendLine(message);
+            }
+
+            _logger.LogInformation($"Sent to: {email}");
+            _logger.LogInformation(builder.ToString());
 
             if (string.IsNullOrEmpty(emailSubject))
             {
@@ -79,7 +94,12 @@ namespace FormForwarder.Controllers
 
             try
             {
-                _smtpClient.Send(_email, email, emailSubject, builder.ToString());
+                var mailMessage = new MailMessage(_email, email, emailSubject, builder.ToString())
+                {
+                    IsBodyHtml = true,
+                    BodyEncoding = Encoding.UTF8
+                };
+                _smtpClient.Send(mailMessage);
             }
             catch (Exception ex)
             {
