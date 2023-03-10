@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mail;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace FormForwarder.Controllers
 {
@@ -8,6 +9,7 @@ namespace FormForwarder.Controllers
     [Route("")]
     public class FormForwarderController : ControllerBase
     {
+        private const string EMAIL_VALIDATE_REGEX = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
         private const string EMAIL_SUBJECT = "Form Submitted";
 
         private readonly ILogger<FormForwarderController> _logger;
@@ -24,51 +26,91 @@ namespace FormForwarder.Controllers
         [HttpPost("{email}")]
         public IActionResult Post(string email)
         {
+
+            _logger.LogInformation($"Form forward request received for '{email}'.");
             var builder = new StringBuilder();
             var emailSubject = "";
+            var successPage = "";
+            var message = "";
 
-            if (!string.IsNullOrEmpty(email))
+            if (string.IsNullOrEmpty(email))
             {
-                foreach (var key in HttpContext.Request.Form.Keys)
-                {
-                    var val = HttpContext.Request.Form[key];
-                    if (key == "subject")
-                    {
-                        emailSubject = val;
-                    }
-                    else if (string.IsNullOrEmpty(val.ToString()))
-                    {
-                        builder.AppendLine("The user did not provide a " + key);
-                        builder.AppendLine();
-                    }
-                    else
-                    {
-                        builder.AppendLine(key + ":");
-                        builder.AppendLine();
-                        builder.AppendLine(val.ToString());
-                        builder.AppendLine();
-                    }
-                }
-
-                if (emailSubject == string.Empty)
-                {
-                    emailSubject = EMAIL_SUBJECT;
-                }
-
-                try
-                {
-                    _smtpClient.Send(_email, email, emailSubject, builder.ToString());
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex.ToString());
-                    return Problem();
-                }
-                return Ok();
+                _logger.LogError("Must enter an email address.");
+                return BadRequest("Must enter an email address.");
             }
-            else
+
+            var emailMatch = Regex.Match(email, EMAIL_VALIDATE_REGEX, RegexOptions.IgnoreCase);                 // Verify email is in proper email form
+            if (!emailMatch.Success) {
+                _logger.LogError("Must enter an email address in valid email address form (your@email.com).");
+                return BadRequest("Must enter an email address in valid email address form (your@email.com).");
+            }
+
+            foreach (var key in HttpContext.Request.Form.Keys)
             {
-                return BadRequest();
+                var val = HttpContext.Request.Form[key];
+                if (key == "subject")
+                {
+                    emailSubject = val;
+                }
+                else if (string.IsNullOrEmpty(val.ToString()))
+                {
+                    builder.AppendLine($"The user did not provide a {key}");
+                    builder.AppendLine();
+                }
+                else if (key == "_next") {
+                    successPage = val;
+                }
+                else if (key == "message") {
+                    message = val.ToString();  
+                }
+                else
+                {
+                    builder.AppendLine($"<b>${key}:</b> {val.ToString()}");
+                    builder.AppendLine();
+                }
+            }
+
+            if (string.IsNullOrEmpty(emailSubject))
+            {
+                emailSubject = EMAIL_SUBJECT;
+            }
+
+            // Provide a default message if user does not send a message
+            if (message == "")
+            {
+                builder.AppendLine("<b>Message:</b>");
+                builder.AppendLine("The user did provide provide a message.");
+            } else
+            {
+                builder.AppendLine("<b>Message:</b>");
+                builder.AppendLine(message);
+            }
+
+            _logger.LogInformation($"Sent to: {email}");
+            _logger.LogInformation(builder.ToString());
+
+            try
+            { 
+                var mailMessage = new MailMessage(_email, email, emailSubject, builder.ToString())
+                {
+                    IsBodyHtml = true,              // Needed to use formatting in body of email
+                    BodyEncoding = Encoding.UTF8
+                };
+                _smtpClient.Send(mailMessage);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                return Problem();
+            }
+
+            _logger.LogInformation("Returned OK");
+
+            // Redirects to location received in form submitted
+            if (!string.IsNullOrEmpty(successPage)) {
+                return Redirect(successPage);
+            } else {
+                return Ok();
             }
         }
     }
