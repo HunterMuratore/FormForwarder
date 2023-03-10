@@ -54,19 +54,17 @@ namespace FormForwarder.Controllers
                 }
                 else if (string.IsNullOrEmpty(val.ToString()))
                 {
-                    builder.AppendLine($"The user did not provide a {key}");
-                    builder.AppendLine();
+                    builder.AppendLine("The user did not provide a " + key + "<br>");
                 }
                 else if (key == "_next") {
                     successPage = val;
                 }
-                else if (key == "message") {
+                else if (key == "Message") {
                     message = val.ToString();  
                 }
                 else
                 {
-                    builder.AppendLine($"<b>${key}:</b> {val.ToString()}");
-                    builder.AppendLine();
+                    builder.AppendLine("<b>" + key + ":</b> " + val.ToString() + "<br>");
                 }
             }
 
