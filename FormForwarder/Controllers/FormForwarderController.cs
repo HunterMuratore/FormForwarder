@@ -1,6 +1,4 @@
-using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using System.Net.Mail;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -41,8 +39,7 @@ namespace FormForwarder.Controllers
                 return BadRequest("Must enter an email address.");
             }
 
-            // 
-            var emailMatch = Regex.Match(email, EMAIL_VALIDATE_REGEX, RegexOptions.IgnoreCase);
+            var emailMatch = Regex.Match(email, EMAIL_VALIDATE_REGEX, RegexOptions.IgnoreCase);                 // Verify email is in proper email form
             if (!emailMatch.Success) {
                 _logger.LogError("Must enter an email address in valid email address form (your@email.com).");
                 return BadRequest("Must enter an email address in valid email address form (your@email.com).");
@@ -73,6 +70,12 @@ namespace FormForwarder.Controllers
                 }
             }
 
+            if (string.IsNullOrEmpty(emailSubject))
+            {
+                emailSubject = EMAIL_SUBJECT;
+            }
+
+            // Provide a default message if user does not send a message
             if (message == "")
             {
                 builder.AppendLine("<b>Message:</b>");
@@ -86,17 +89,11 @@ namespace FormForwarder.Controllers
             _logger.LogInformation($"Sent to: {email}");
             _logger.LogInformation(builder.ToString());
 
-            if (string.IsNullOrEmpty(emailSubject))
-            {
-                emailSubject = EMAIL_SUBJECT;
-                _logger.LogInformation(emailSubject);
-            }
-
             try
-            {
+            { 
                 var mailMessage = new MailMessage(_email, email, emailSubject, builder.ToString())
                 {
-                    IsBodyHtml = true,
+                    IsBodyHtml = true,              // Needed to use formatting in body of email
                     BodyEncoding = Encoding.UTF8
                 };
                 _smtpClient.Send(mailMessage);
@@ -108,6 +105,8 @@ namespace FormForwarder.Controllers
             }
 
             _logger.LogInformation("Returned OK");
+
+            // Redirects to location received in form submitted
             if (!string.IsNullOrEmpty(successPage)) {
                 return Redirect(successPage);
             } else {
