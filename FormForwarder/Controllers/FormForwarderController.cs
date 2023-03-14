@@ -76,11 +76,11 @@ namespace FormForwarder.Controllers
             // Provide a default message if user does not send a message
             if (message == "")
             {
-                builder.AppendLine("<b>Message:</b>");
+                builder.AppendLine("<b>Message:</b><br>");
                 builder.AppendLine("The user did provide provide a message.");
             } else
             {
-                builder.AppendLine("<b>Message:</b>");
+                builder.AppendLine("<b>Message:</b><br>");
                 builder.AppendLine(message);
             }
 
