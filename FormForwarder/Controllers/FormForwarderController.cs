@@ -1,3 +1,4 @@
+using FormForwarder.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mail;
 using System.Text;
@@ -13,10 +14,10 @@ namespace FormForwarder.Controllers
         private const string EMAIL_SUBJECT = "Form Submitted";
 
         private readonly ILogger<FormForwarderController> _logger;
-        private readonly SmtpClient _smtpClient;
+        private readonly ISmtpClient _smtpClient;
         private readonly string _email;
 
-        public FormForwarderController(ILogger<FormForwarderController> logger, SmtpClient smtpClient, IConfiguration configuration)
+        public FormForwarderController(ILogger<FormForwarderController> logger, ISmtpClient smtpClient, IConfiguration configuration)
         {
             _logger = logger;
             _smtpClient = smtpClient;
@@ -45,9 +46,15 @@ namespace FormForwarder.Controllers
                 return BadRequest("Must enter an email address in valid email address form (your@email.com).");
             }
 
-            foreach (var key in HttpContext.Request.Form.Keys)
+            var form = HttpContext?.Request?.Form;
+            if (form == null)
             {
-                var val = HttpContext.Request.Form[key];
+                return BadRequest("Must submit form data.");
+            }
+
+            foreach (var key in form.Keys)
+            {
+                var val = form[key];
                 if (key == "subject")
                 {
                     emailSubject = val;
