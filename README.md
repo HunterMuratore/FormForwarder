@@ -9,3 +9,4 @@ API used to format and forward html form data through email to users specified a
 2. Pull the pre-made formforwarder image from Docker Hub using `docker compose pull`
 
 3. Run the compose file using `docker compose up -d`
+
