@@ -55,7 +55,7 @@ namespace FormForwarder.Controllers
             foreach (var key in form.Keys)
             {
                 var val = form[key];
-                if (key == "subject")
+                if (key.ToLower() == "subject")
                 {
                     emailSubject = val;
                 }
@@ -63,10 +63,10 @@ namespace FormForwarder.Controllers
                 {
                     builder.AppendLine("The user did not provide a " + key + "<br>");
                 }
-                else if (key == "_next") {
+                else if (key.ToLower() == "_next") {
                     successPage = val;
                 }
-                else if (key == "Message") {
+                else if (key.ToLower() == "message") {
                     message = val.ToString();  
                 }
                 else

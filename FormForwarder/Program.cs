@@ -1,3 +1,5 @@
+using FormForwarder.Interfaces;
+using FormForwarder.Services;
 using Microsoft.AspNetCore.HttpLogging;
 using System.Net;
 using System.Net.Mail;
@@ -17,7 +19,10 @@ var smtpClient = new SmtpClient(smtpHost, smtpPort)
     Credentials = new NetworkCredential(smtpEmail, smtpPassword),
     EnableSsl = true
 };
-builder.Services.AddSingleton(smtpClient);
+
+var smtpClientWrapper = new SmtpClientWrapper(smtpClient);
+
+builder.Services.AddSingleton<ISmtpClient>(smtpClientWrapper);
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -34,7 +39,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseAuthorization();
-
 app.MapControllers();
 
 if (string.IsNullOrEmpty(port)) {
