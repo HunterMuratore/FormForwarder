@@ -2,7 +2,7 @@
 
 ## Description
 
-FormForwader was built so that I wouldn't have to use a 3rd party service to allow users to contact me through my contact forms in my other apps. 
+FormForwader was built so that I wouldn't have to use a 3rd party service to allow users to contact me through my contact forms in my other apps.
 
 It is an API built in C# that is used to format and forward form data through email to a user's specified address.
 The app is built as a Docker image making it extremely easy for anyone to use on their server.
@@ -28,12 +28,10 @@ The app is built as a Docker image making it extremely easy for anyone to use on
 
 ## Usage
 
-This api can be used to format and forward form data through email to a user's specified address. The api has only one POST route which must be pass in an object of form data. Using that form data it structures an email which it then sends to the user. 
+This API can be used to format and forward form data through email to a user's specified address. The API has only one POST route which takes in an object of form data.
+Using that form data, FormForwarder structures it into the layout of an email which it then sends to the user. 
 
-FormForwarder is currently being used on my portfolio, <huntermuratore.com>, to send a user's contact info and message to my email through the contact form. 
-
-[![FormForwarder Demo]]
->Click the image to be taken to this app's demo video on youtube
+FormForwarder is currently being used on my portfolio, <huntermuratore.com>, to send a user's contact info and message to my email through the contact form.
 
 ## Tests
 
