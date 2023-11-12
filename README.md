@@ -31,7 +31,7 @@ The app is built as a Docker image making it extremely easy for anyone to use on
 This API can be used to format and forward form data through email to a user's specified address. The API has only one POST route which takes in an object of form data.
 Using that form data, FormForwarder structures it into the layout of an email which it then sends to the user. 
 
-FormForwarder is currently being used on my portfolio, <huntermuratore.com>, to send a user's contact info and message to my email through the contact form.
+FormForwarder is currently being used on my portfolio, <[huntermuratore.com](https://huntermuratore.com/)>, to send a user's contact info and message to my email through the contact form.
 
 ## Tests
 
