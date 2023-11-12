@@ -20,11 +20,21 @@ The app is built as a Docker image making it extremely easy for anyone to use on
 
 ## Installation
 
-1. Copy .env.template to .env and place your email address, passport and desired port inside.
+1. Copy .env.template to a .env file in your server FormForwarder directory and place your email address, password and desired port inside.
+    1. If using an Outlook email paste `SMTP__Host=smtp-mail.outlook.com` into your .env file.
 
-2. Pull the pre-made formforwarder image from Docker Hub using `docker compose pull`
+2. Copy the docker-compose.yml file into your server FormForwarder directory.
+    
+3. Pull the pre-made FormForwarder image from Docker Hub using `docker compose pull`.
 
-3. Run the compose file using `docker compose up -d`
+4. Run the compose file using `docker compose up -d`.
+
+5. Set up your server to host the FormForwarder API through the specified port number.
+    1. You may need to add CORS headers to your server block. For FormForwarder, the necessary headers are:
+        ```
+        add_header 'Access-Control-Allow-Origin' 'https://huntermuratore.com';
+        add_header 'Access-Control-Allow-Methods' 'POST, OPTIONS';   
+        ```
 
 ## Usage
 
