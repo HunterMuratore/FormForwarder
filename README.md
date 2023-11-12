@@ -2,7 +2,9 @@
 
 ## Description
 
-FormForwader was built so that I wouldn't have to use a 3rd party service to allow users to contact me through my contact forms in my other apps. It is an API built in C# that is used to format and forward form data through email to a user's specified address.
+FormForwader was built so that I wouldn't have to use a 3rd party service to allow users to contact me through my contact forms in my other apps. 
+
+It is an API built in C# that is used to format and forward form data through email to a user's specified address.
 The app is built as a Docker image making it extremely easy for anyone to use on their server.
 
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
@@ -30,7 +32,7 @@ This api can be used to format and forward form data through email to a user's s
 
 FormForwarder is currently being used on my portfolio, <huntermuratore.com>, to send a user's contact info and message to my email through the contact form. 
 
-[![Social Network Api Demo]]
+[![FormForwarder Demo]]
 >Click the image to be taken to this app's demo video on youtube
 
 ## Tests
@@ -46,9 +48,7 @@ This project is under the license of MIT.
 If you have an questions about the app or would like to contribute in any way please feel free to reach out to me!
 
 Email:
->[https://github.com/HunterMuratore](https://github.com/HunterMuratore)
-
-GitHub account:
-
 >[muratoreh@gmail.com](mailto:muratoreh@gmail.com?subject=[GitHub]%20Form%20Forwarder)
 
+GitHub account:
+>[https://github.com/HunterMuratore](https://github.com/HunterMuratore)
