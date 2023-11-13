@@ -36,6 +36,13 @@ The app is built as a Docker image making it extremely easy for anyone to use on
         add_header 'Access-Control-Allow-Methods' 'POST, OPTIONS';   
         ```
 
+6. When making the post request, you may have to add in the options of the request this header:
+   ```
+   headers : {
+       "Content-Type" : "application/x-www-form-urlencoded"
+   }
+   ```
+
 ## Usage
 
 This API can be used to format and forward form data through email to a user's specified address. The API has only one POST route which takes in an object of form data.
